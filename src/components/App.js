@@ -74,7 +74,7 @@ export default class App extends Component {
         locationError: "Location information is unavailable"
       });
     }
-  }
+  };
 
   getWeather = async () => {
     // get weather if geolocation request succeeded
@@ -122,7 +122,7 @@ export default class App extends Component {
         });
       }
     }
-  }
+  };
 
   setBackgroundImage = async () => {
     // destructuring state values
@@ -134,23 +134,26 @@ export default class App extends Component {
     });
 
     //search for the background image
-    const responseImage = await unsplashGetImage.get("/search/photos", {
-      params: {
-        query: this.state.backgroundImgDescription
-      }
-    });
-
-    // generate a random number to choose a background image
-    const randomImage = Math.floor(Math.random() * 10);
-    this.setState({
-      backgroundImageUrl: responseImage.data.results[randomImage].urls.regular
-    });
+    try {
+      const responseImage = await unsplashGetImage.get("/search/photos", {
+        params: {
+          query: this.state.backgroundImgDescription
+        }
+      });
+      // generate a random number to choose a background image
+      const randomImage = Math.floor(Math.random() * 10);
+      this.setState({
+        backgroundImageUrl: responseImage.data.results[randomImage].urls.regular
+      });
+    } catch (error) {
+      console.error(error);
+    }
 
     // set background
     document.body.style.backgroundImage = `url(${
       this.state.backgroundImageUrl
     })`;
-  }
+  };
 
   // toggle temperature from degrees Celsius to Fahrenheit
   toggleTemp = () => {
@@ -227,7 +230,6 @@ export default class App extends Component {
               </div>
             </div>
           )}
-         
         </div>
 
         {/* <Test test={this.state.testing}/> */}
