@@ -74,6 +74,8 @@ export default class App extends Component {
     } catch (error) {
       console.error(error);
       this.setState({
+          isLocationLoading: false,
+          isWeatherLoading: false,
         locationError: "Location information is unavailable"
       });
     }
@@ -122,6 +124,8 @@ export default class App extends Component {
       } catch (error) {
         console.error(error);
         this.setState({
+            isLocationLoading: false,
+            isWeatherLoading: false,
           weatherAPIError: "Failed to load local weather."
         });
       }
@@ -182,13 +186,16 @@ export default class App extends Component {
       region,
       country,
       isLocationLoading,
+      locationError,
       updatedTime,
       icon,
       displayTemp,
       unit,
       humidity,
       description,
-      windSpeed, isWeatherLoading
+      windSpeed, 
+      weatherAPIError,
+      isWeatherLoading
 
     } = this.state;
 
@@ -198,7 +205,12 @@ export default class App extends Component {
           <header>
             <h1>Local weather APP</h1>
             <hr />
-            <div>
+
+
+{
+    isLocationLoading || isWeatherLoading ?  <h3> Loading... </h3> :
+    locationError || weatherAPIError ? false : (
+    <div>
               <SearchBar onSubmit={this.onSubmit} />
               <div className="updated">Updated: 
               {isLocationLoading || isWeatherLoading ? (
@@ -206,11 +218,18 @@ export default class App extends Component {
           )
           : updatedTime}</div>
             </div>
+)}
+
+
+            
+
+
+
           </header>
-          {this.state.locationError ? (
-            <div className="errorMessage">{this.state.locationError}</div>
-          ) : this.state.weatherAPIError ? (
-            <div className="errorMessage">{this.state.weatherAPIError}</div>
+          {locationError ? (
+            <div className="errorMessage">{locationError}</div>
+          ) : weatherAPIError ? (
+            <div className="errorMessage">{weatherAPIError}</div>
           ) : isLocationLoading || isWeatherLoading ? (
             <h3> Loading... </h3>
           ) : (
