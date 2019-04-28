@@ -16,6 +16,7 @@ export default class App extends Component {
       latitude: null,
       longitute: null
     },
+    isLocationLoading: false,
     updatedTime: "",
     updateInterval: "",
     locationError: "",
@@ -30,7 +31,8 @@ export default class App extends Component {
     apiID: null,
     backgroundImgDescription: "",
     backgroundImageUrl: defaultImg,
-    weatherAPIError: ""
+    weatherAPIError: "",
+    isWeatherLoading: false
   };
 
   async componentDidMount() {
@@ -66,6 +68,7 @@ export default class App extends Component {
           latitude: locationDetails.data.latitude,
           longitude: locationDetails.data.longitude
         },
+        isLocationLoading: true,
         locationError: ""
       });
     } catch (error) {
@@ -112,7 +115,8 @@ export default class App extends Component {
             additionalDescription: weather[0].main,
             windSpeed: wind.speed.toFixed(2),
             apiID: weather[0].id,
-            weatherAPIError: ""
+            weatherAPIError: "",
+            isWeatherLoading: true
           });
         }
       } catch (error) {
@@ -194,13 +198,19 @@ export default class App extends Component {
             <hr />
             <div>
               <SearchBar onSubmit={this.onSubmit} />
-              <div className="updated">Updated: {updatedTime}</div>
+              <div className="updated">Updated: 
+              {!this.state.isLocationLoading || !this.state.isWeatherLoading ? (
+            <p> Loading... </p>
+          )
+          : updatedTime}</div>
             </div>
           </header>
           {this.state.locationError ? (
             <div className="errorMessage">{this.state.locationError}</div>
           ) : this.state.weatherAPIError ? (
             <div className="errorMessage">{this.state.weatherAPIError}</div>
+          ) : !this.state.isLocationLoading || !this.state.isWeatherLoading ? (
+            <h3> Loading... </h3>
           ) : (
             <div className="weather">
               <div className="container container-top">
