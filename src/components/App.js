@@ -181,13 +181,15 @@ export default class App extends Component {
       city,
       region,
       country,
+      isLocationLoading,
       updatedTime,
       icon,
       displayTemp,
       unit,
       humidity,
       description,
-      windSpeed
+      windSpeed, isWeatherLoading
+
     } = this.state;
 
     return (
@@ -199,7 +201,7 @@ export default class App extends Component {
             <div>
               <SearchBar onSubmit={this.onSubmit} />
               <div className="updated">Updated: 
-              {this.state.isLocationLoading || this.state.isWeatherLoading ? (
+              {isLocationLoading || isWeatherLoading ? (
             <p> Loading... </p>
           )
           : updatedTime}</div>
@@ -209,7 +211,7 @@ export default class App extends Component {
             <div className="errorMessage">{this.state.locationError}</div>
           ) : this.state.weatherAPIError ? (
             <div className="errorMessage">{this.state.weatherAPIError}</div>
-          ) : this.state.isLocationLoading || this.state.isWeatherLoading ? (
+          ) : isLocationLoading || isWeatherLoading ? (
             <h3> Loading... </h3>
           ) : (
             <div className="weather">
