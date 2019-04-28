@@ -16,7 +16,7 @@ export default class App extends Component {
       latitude: null,
       longitute: null
     },
-    isLocationLoading: false,
+    isLocationLoading: true,
     updatedTime: "",
     updateInterval: "",
     locationError: "",
@@ -32,7 +32,7 @@ export default class App extends Component {
     backgroundImgDescription: "",
     backgroundImageUrl: defaultImg,
     weatherAPIError: "",
-    isWeatherLoading: false
+    isWeatherLoading:true
   };
 
   async componentDidMount() {
@@ -68,7 +68,7 @@ export default class App extends Component {
           latitude: locationDetails.data.latitude,
           longitude: locationDetails.data.longitude
         },
-        isLocationLoading: true,
+        isLocationLoading: false,
         locationError: ""
       });
     } catch (error) {
@@ -116,7 +116,7 @@ export default class App extends Component {
             windSpeed: wind.speed.toFixed(2),
             apiID: weather[0].id,
             weatherAPIError: "",
-            isWeatherLoading: true
+            isWeatherLoading: false
           });
         }
       } catch (error) {
@@ -199,7 +199,7 @@ export default class App extends Component {
             <div>
               <SearchBar onSubmit={this.onSubmit} />
               <div className="updated">Updated: 
-              {!this.state.isLocationLoading || !this.state.isWeatherLoading ? (
+              {this.state.isLocationLoading || this.state.isWeatherLoading ? (
             <p> Loading... </p>
           )
           : updatedTime}</div>
@@ -209,7 +209,7 @@ export default class App extends Component {
             <div className="errorMessage">{this.state.locationError}</div>
           ) : this.state.weatherAPIError ? (
             <div className="errorMessage">{this.state.weatherAPIError}</div>
-          ) : !this.state.isLocationLoading || !this.state.isWeatherLoading ? (
+          ) : this.state.isLocationLoading || this.state.isWeatherLoading ? (
             <h3> Loading... </h3>
           ) : (
             <div className="weather">
