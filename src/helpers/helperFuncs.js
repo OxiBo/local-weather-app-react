@@ -54,7 +54,7 @@ const findBackground = (temp, id, additionalDescription) => {
       // summer clear
       case temp > 23 && id === 800:
       case temp > 23:
-        backgroundImgDescription = "summer clear";
+        backgroundImgDescription = "summer";
         break;
 
       // autumn rain
@@ -74,8 +74,10 @@ const findBackground = (temp, id, additionalDescription) => {
         break;
 
       default:
-      backgroundImgDescription = "weather app";
+      backgroundImgDescription = false;
     };
+
+    
     return backgroundImgDescription;
 }
 
