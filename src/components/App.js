@@ -32,7 +32,7 @@ export default class App extends Component {
     backgroundImgDescription: "",
     backgroundImageUrl: defaultImg,
     weatherAPIError: "",
-    isWeatherLoading:true
+    isWeatherLoading: true
   };
 
   async componentDidMount() {
@@ -74,8 +74,8 @@ export default class App extends Component {
     } catch (error) {
       console.error(error);
       this.setState({
-          isLocationLoading: false,
-          isWeatherLoading: false,
+        isLocationLoading: false,
+        isWeatherLoading: false,
         locationError: "Location information is unavailable"
       });
     }
@@ -124,8 +124,8 @@ export default class App extends Component {
       } catch (error) {
         console.error(error);
         this.setState({
-            isLocationLoading: false,
-            isWeatherLoading: false,
+          isLocationLoading: false,
+          isWeatherLoading: false,
           weatherAPIError: "Failed to load local weather."
         });
       }
@@ -137,9 +137,15 @@ export default class App extends Component {
     const { temperature: temp, apiID: id, additionalDescription } = this.state;
 
     // find a query word for searching for background
-    this.setState({
-      backgroundImgDescription: findBackground(temp, id, additionalDescription)
-    });
+    if (temp && id) {
+      this.setState({
+        backgroundImgDescription: findBackground(
+          temp,
+          id,
+          additionalDescription
+        )
+      });
+    }
 
     //search for the background image
     try {
@@ -150,9 +156,12 @@ export default class App extends Component {
       });
       // generate a random number to choose a background image
       const randomImage = Math.floor(Math.random() * 10);
-      this.setState({
-        backgroundImageUrl: responseImage.data.results[randomImage].urls.regular
-      });
+      if (responseImage.data.results.length) {
+        this.setState({
+          backgroundImageUrl:
+            responseImage.data.results[randomImage].urls.regular
+        });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -193,10 +202,9 @@ export default class App extends Component {
       unit,
       humidity,
       description,
-      windSpeed, 
+      windSpeed,
       weatherAPIError,
       isWeatherLoading
-
     } = this.state;
 
     return (
@@ -206,33 +214,29 @@ export default class App extends Component {
             <h1>Local weather APP</h1>
             <hr />
 
-
-{
-    isLocationLoading || isWeatherLoading ?  <h3> Loading... </h3> :
-    locationError || weatherAPIError ? false : (
-    <div>
-              <SearchBar onSubmit={this.onSubmit} />
-              <div className="updated">Updated: 
-              {isLocationLoading || isWeatherLoading ? (
-            <p> Loading... </p>
-          )
-          : updatedTime}</div>
-            </div>
-)}
-
-
-            
-
-
-
+            {isLocationLoading || isWeatherLoading ? (
+              <h3> Loading... </h3>
+            ) : locationError || weatherAPIError ? (
+              false
+            ) : (
+              <div>
+                <SearchBar onSubmit={this.onSubmit} />
+                <div className="updated">
+                  Updated:
+                  {isLocationLoading && isWeatherLoading ? (
+                    <p> Loading... </p>
+                  ) : (
+                    updatedTime
+                  )}
+                </div>
+              </div>
+            )}
           </header>
           {locationError ? (
             <div className="errorMessage">{locationError}</div>
           ) : weatherAPIError ? (
             <div className="errorMessage">{weatherAPIError}</div>
-          ) : isLocationLoading || isWeatherLoading ? (
-            <h3> Loading... </h3>
-          ) : (
+          ) :  (
             <div className="weather">
               <div className="container container-top">
                 <div className="inline-details">
