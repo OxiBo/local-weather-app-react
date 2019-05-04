@@ -95,6 +95,13 @@ body {
             color: #12508f;
           }
         }
+
+        .container-temp {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
         .details {
           background-color: #fefbd8;
           height: 60px;
@@ -120,7 +127,7 @@ body {
       .container-top {
         border-radius: 5px;
         padding: 10px 10px 10px 0;
-        width: 160px;
+        width: 170px;
         background-color: rgba(0, 0, 0, 0.3);
         color: $tempColor;
         animation: fadein 3s;
@@ -133,7 +140,6 @@ body {
     margin-bottom: 20px;
   }
 }
-
 
 @media only screen and (min-width: 768px) {
   form,
