@@ -25,7 +25,6 @@ export default class App extends Component {
     description: "",
     additionalDescription: "",
     apiID: null,
-    backgroundImgDescription: "",
     backgroundImageUrl: defaultImg,
     weatherAPIError: "",
     isWeatherLoading: true
