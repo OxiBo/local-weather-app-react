@@ -46,7 +46,6 @@ export default class App extends Component {
 
     this.clearInterval = setInterval(() => {
       this.getWeather();
-      this.setBackgroundImage();
     }, this.state.updateInterval);
   };
 
