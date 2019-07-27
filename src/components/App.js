@@ -38,12 +38,16 @@ export default class App extends Component {
     document.body.style.backgroundColor = null;
   }
 
-  onSubmit = async (interval) => {
+  onSubmit = async interval => {
     const milliseconds = interval * 360000;
     await this.setState({ updateInterval: milliseconds, interval: interval });
     this.clearInterval = setInterval(async () => {
-     
-      this.getWeather( await weatherInfo(this.state.coords.longitude, this.state.coords.latitude))
+      this.getWeather(
+        await weatherInfo(
+          this.state.coords.longitude,
+          this.state.coords.latitude
+        )
+      );
     }, this.state.updateInterval);
   };
 
@@ -57,16 +61,24 @@ export default class App extends Component {
       locationError,
       isWeatherLoading
     } = locationInfo;
-
-    this.setState({
-      city,
-      region,
-      country,
-      coords,
-      isLocationLoading,
-      locationError,
-      isWeatherLoading
-    });
+   
+    if (!locationError) {
+      this.setState({
+        city,
+        region,
+        country,
+        coords,
+        isLocationLoading,
+        locationError,
+        isWeatherLoading
+      });
+    } else {
+      this.setState({
+        isLocationLoading,
+        locationError,
+        isWeatherLoading
+      });
+    }
   };
 
   getWeather = weatherDetails => {

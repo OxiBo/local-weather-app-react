@@ -7,7 +7,10 @@ import ToggleTemp from "./ToggleTemp";
 class WeatherDisplay extends Component {
   async componentDidMount() {
     const { coords } = await this.getLocation();
-    await this.getWeather(coords.latitude, coords.longitude);
+    if(coords) {
+        await this.getWeather(coords.latitude, coords.longitude);
+    }
+    
   }
 
   getLocation = async () => {
@@ -24,8 +27,8 @@ class WeatherDisplay extends Component {
 
     // set background
     document.body.style.backgroundImage = `url(${
-        this.props.backgroundImageUrl
-      })`;
+      this.props.backgroundImageUrl
+    })`;
   };
   render() {
     const {
