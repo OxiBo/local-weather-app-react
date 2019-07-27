@@ -1,10 +1,12 @@
 import React, { Component } from "react";
-import { location } from "../apis/location";
+// import { location } from "../apis/location";
 import { weatherInfo } from "../apis/weather";
 import "./styles.scss";
 import defaultImg from "../gallery/default1.jpg";
-import SearchBar from "./SearchBar";
-import ToggleTemp from "./ToggleTemp";
+// import SearchBar from "./SearchBar";
+import WeatherDisplay from "./WeatherDisplay";
+// import ToggleTemp from "./ToggleTemp";
+import UpdateInfo from "./UpdateInfo";
 
 export default class App extends Component {
   state = {
@@ -18,6 +20,7 @@ export default class App extends Component {
     isLocationLoading: true,
     updatedTime: "",
     updateInterval: "",
+    interval: "",
     locationError: "",
     icon: "",
     temperature: null,
@@ -30,28 +33,21 @@ export default class App extends Component {
     isWeatherLoading: true
   };
 
-  async componentDidMount() {
-    await this.getLocation();
-    await this.getWeather();
-  }
-
   componentWillUnmount() {
     clearInterval(this.clearInterval);
     document.body.style.backgroundColor = null;
   }
 
-  onSubmit = async interval => {
+  onSubmit = async (interval) => {
     const milliseconds = interval * 360000;
-    await this.setState({ updateInterval: milliseconds });
-
-    this.clearInterval = setInterval(() => {
-      this.getWeather();
+    await this.setState({ updateInterval: milliseconds, interval: interval });
+    this.clearInterval = setInterval(async () => {
+     
+      this.getWeather( await weatherInfo(this.state.coords.longitude, this.state.coords.latitude))
     }, this.state.updateInterval);
   };
 
-  getLocation = async () => {
-    const locationInfo = await location();
-
+  getLocation = locationInfo => {
     const {
       city,
       region,
@@ -73,64 +69,61 @@ export default class App extends Component {
     });
   };
 
-  getWeather = async () => {
-    // get weather if geolocation request succeeded
-    if (this.state.coords.latitude && this.state.coords.longitude) {
-      const { latitude, longitude } = this.state.coords;
-      const weatherDetails = await weatherInfo(latitude, longitude);
+  getWeather = weatherDetails => {
+    const {
+      weatherAPIError,
+      updatedTime,
+      icon,
+      temperature,
+      humidity,
+      description,
+      additionalDescription,
+      windSpeed,
+      apiID,
+      backgroundImageUrl,
+      isWeatherLoading,
+      isLocationLoading
+    } = weatherDetails;
 
-      const {
-        weatherAPIError,
-        updatedTime,
-        icon,
-        temperature,
-        humidity,
-        description,
-        additionalDescription,
-        windSpeed,
-        apiID,
-        backgroundImageUrl,
-        isWeatherLoading,
-        isLocationLoading
-      } = weatherDetails;
+    this.setState({
+      weatherAPIError,
+      updatedTime,
+      icon,
+      temperature,
+      humidity,
+      description,
+      additionalDescription,
+      windSpeed,
+      apiID,
+      backgroundImageUrl,
+      isWeatherLoading,
+      isLocationLoading
+    });
 
-      this.setState({
-        weatherAPIError,
-        updatedTime,
-        icon,
-        temperature,
-        humidity,
-        description,
-        additionalDescription,
-        windSpeed,
-        apiID,
-        backgroundImageUrl,
-        isWeatherLoading,
-        isLocationLoading
-      });
-
-      // set background
-      document.body.style.backgroundImage = `url(${
-        this.state.backgroundImageUrl
-      })`;
-    }
+    // // set background
+    // document.body.style.backgroundImage = `url(${
+    //   this.state.backgroundImageUrl
+    // })`;
   };
 
   render() {
     const {
+      coords: { longitude, latitude },
       city,
       region,
       country,
       isLocationLoading,
       locationError,
       updatedTime,
+      interval,
       icon,
       temperature,
       humidity,
       description,
       windSpeed,
       weatherAPIError,
-      isWeatherLoading
+      isWeatherLoading,
+      backgroundImageUrl
     } = this.state;
 
     return (
@@ -145,48 +138,35 @@ export default class App extends Component {
             ) : locationError || weatherAPIError ? (
               false
             ) : (
-              <div>
-                <SearchBar onSubmit={this.onSubmit} />
-                <div className="updated">
-                  Updated:
-                  {isLocationLoading && isWeatherLoading ? (
-                    <p> Loading... </p>
-                  ) : (
-                    updatedTime
-                  )}
-                </div>
-              </div>
+              <UpdateInfo
+                isLocationLoading={isLocationLoading}
+                isWeatherLoading={isWeatherLoading}
+                updatedTime={updatedTime}
+                interval={interval}
+                onSubmit={this.onSubmit}
+                lon={longitude}
+                lat={latitude}
+              />
             )}
           </header>
-          {locationError ? (
-            <div className="errorMessage">{locationError}</div>
-          ) : weatherAPIError ? (
-            <div className="errorMessage">{weatherAPIError}</div>
-          ) : (
-            <div className="weather">
-              <div className="container container-top">
-                <div className="inline-details">
-                  <img id="icon" src={icon} alt={description} />
-                </div>
-                {/* wrap the toggle component in "{temperature && }" to be able to pass props which comes from api call*/}
-                {temperature && <ToggleTemp temp={temperature} />}
-              </div>
-              <div className="container">
-                <div className="details" id="location">
-                  {`${city}, ${region}, ${country}`}
-                </div>
-                <div className="details" id="summary">
-                  {description}
-                </div>
-                <div className="details" id="windSpeed">
-                  WS {windSpeed} m/s
-                </div>
-                <div className="details" id="humidity">
-                  humidity {humidity}%
-                </div>
-              </div>
-            </div>
-          )}
+
+          <WeatherDisplay
+            lat={this.state.coords.latitude}
+            lon={this.state.coords.longitude}
+            getLocation={this.getLocation}
+            getWeather={this.getWeather}
+            city={city}
+            region={region}
+            country={country}
+            locationError={locationError}
+            icon={icon}
+            temperature={temperature}
+            humidity={humidity}
+            description={description}
+            windSpeed={windSpeed}
+            weatherAPIError={weatherAPIError}
+            backgroundImageUrl={backgroundImageUrl}
+          />
         </div>
 
         <footer>
